@@ -1,37 +1,29 @@
 import React, { useEffect, useState } from "react";
-import Header from "./components/header";
-import VideoList from "./components/videoList";
+import "./app.css";
+import VideoList from "./components/video_list/video_list";
+
 function App() {
-  const [list, setList] = useState([]);
+  const [videos, setVideos] = useState([]);
+
   useEffect(() => {
-    let mounted = true;
-    getList().then((items) => {
-      if (mounted) {
-        setList(items.items);
-      }
-    });
-    return () => (mounted = false);
-  }, []);
-  const key = "AIzaSyCFCAgowuOWz9s8IbNa3kAENteJ2DuvmrI";
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    redirect: "follow",
-  };
-  function getList() {
-    return fetch(
-      `https://youtube.googleapis.com/youtube/v3/videos?key=${key}&part=snippet&maxResults=10&chart=mostPopular&key=AIzaSyAfkPPaGPSwA7NAjCq-ERgLng1bVyci4_0`,
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(
+      "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=10&key=AIzaSyCFCAgowuOWz9s8IbNa3kAENteJ2DuvmrI&key=AIzaSyCFCAgowuOWz9s8IbNa3kAENteJ2DuvmrI",
       requestOptions
     )
       .then((response) => response.json())
-      .then((result) => result)
+      .then((result) => setVideos(result.items))
       .catch((error) => console.log("error", error));
-  }
+  }, []);
   return (
     <>
-      <Header />
-      <VideoList list={list} />
+      <VideoList videos={videos} />
     </>
   );
 }
+
 export default App;
